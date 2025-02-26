@@ -40,6 +40,12 @@ namespace PruebatecnicaBack.Infrastructure.Persistence.Seedding
                 UserId = 1,
             };
 
+            var userRoleUserDaniel = new UserRole()
+            {
+                RoleId = 2,
+                UserId = 1,
+            };
+
 
             var userRolesUserJuan = new UserRole()
             {
@@ -49,7 +55,7 @@ namespace PruebatecnicaBack.Infrastructure.Persistence.Seedding
 
 
             modelBuilder.Entity<User>().HasData(daniel,juan);
-            modelBuilder.Entity<UserRole>().HasData(userRoleAdminDaniel,userRolesUserJuan);
+            modelBuilder.Entity<UserRole>().HasData(userRoleAdminDaniel,userRolesUserJuan, userRoleUserDaniel);
         }
     }
 }
