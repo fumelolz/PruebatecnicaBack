@@ -21,6 +21,12 @@ Después de crear la migración, aplica los cambios a la base de datos con:
 dotnet ef database update -p .\PruebatecnicaBack.Infrastructure\ -s .\PruebatecnicaBack.Api\
 ```
 
+Modificar los archivos appSettings.json para la conexión a la base de datos
+
+```sh
+"defaultConnection": "Host=localhost;Database=prueba_tecnica;Username=magadan;Password=magadan"
+```
+
 ## Endpoints Disponibles
 
 ### Scraper (Obtener Archivos Excel)
