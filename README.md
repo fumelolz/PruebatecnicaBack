@@ -87,3 +87,7 @@ El sistema incluye dos usuarios predefinidos para pruebas:
 2. **Usuario Regular:**
    - **Correo:** `juan_perez@hotmail.com`
    - **Contraseña:** `Heros2022#`
+
+## Pantalla de Swagger
+Se muestra la pantalla del funcionamiento del swagger
+![Pantalla de swagger](/swagger.png)
