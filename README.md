@@ -21,6 +21,10 @@ Después de crear la migración, aplica los cambios a la base de datos con:
 dotnet ef database update -p .\PruebatecnicaBack.Infrastructure\ -s .\PruebatecnicaBack.Api\
 ```
 
+Recomiendo usar PowerShell con permisos de administrador
+
+![Terminal](/terminal.png)
+
 Modificar los archivos appSettings.json para la conexión a la base de datos
 
 ```sh
