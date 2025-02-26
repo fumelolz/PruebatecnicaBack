@@ -31,6 +31,17 @@ Modificar los archivos appSettings.json para la conexión a la base de datos
 "defaultConnection": "Host=localhost;Database=prueba_tecnica;Username=magadan;Password=magadan"
 ```
 
+Modificar el archivo del servicio del scrapper el sleep, si se presenta algún error, esto depende de la velocidad de internet del cliente donde se ejecuta el backend, para poder obtener los datos de la CENACE
+
+```sh
+driver.Navigate().GoToUrl("https://www.cenace.gob.mx/Paginas/SIM/CapacidadDemandadaRAP.aspx");
+Thread.Sleep(500);
+
+var yearDropdown = new SelectElement(driver.FindElement(By.Id("ContentPlaceHolder1_DrpAnio")));
+yearDropdown.SelectByValue(year.ToString());
+Thread.Sleep(500);
+```
+
 ## Endpoints Disponibles
 
 ### Scraper (Obtener Archivos Excel)
