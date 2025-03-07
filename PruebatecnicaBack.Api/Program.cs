@@ -38,7 +38,6 @@ var app = builder.Build();
     var fileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.WebRootPath, "images"));
     var requestPath = "/images";
 
-    // Enable displaying browser links.
     app.UseStaticFiles(new StaticFileOptions
     {
         FileProvider = fileProvider,
@@ -56,6 +55,7 @@ var app = builder.Build();
     app.UseAuthorization();
     app.MapControllers();
     app.MapHub<OrderHub>("/orderHub");
+    app.MapHub<NotificationHub>("/hubs/notifications");
 
     app.Run();
 }

@@ -19,9 +19,9 @@ namespace PruebatecnicaBack.Api.Controllers
         
 
         [HttpGet()]
-        public async Task<IActionResult> GetData([FromQuery] int year = 2024, [FromQuery] bool update = false)
+        public async Task<IActionResult> GetData([FromQuery] int userId, [FromQuery] int year = 2024, [FromQuery] bool update = false)
         {
-            var result = await _mediator.Send(new GetDataCommand(year, update));
+            var result = await _mediator.Send(new GetDataCommand(userId, year, update));
             return Res("Success", StatusCodes.Status204NoContent, "Datos guardados correctamente.", result);
         }
     }

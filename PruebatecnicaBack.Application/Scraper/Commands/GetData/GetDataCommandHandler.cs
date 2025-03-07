@@ -1,36 +1,28 @@
 ﻿using MediatR;
-using PruebatecnicaBack.Application.Common.Interfaces.scrapping;
-using PruebatecnicaBack.Application.Common.Persistence;
+using PruebatecnicaBack.Application.Common.Interfaces.Scheduling;
+using PruebatecnicaBack.Application.Common.Interfaces.Scraper;
 using PruebatecnicaBack.Application.Scraper.Commands.GetData;
-
+using Quartz;
 namespace PruebatecnicaBack.Application.Scraper.Queries.GetProductData;
 
 public class GetDataCommandHandler : IRequestHandler<GetDataCommand, string>
 {
-    private readonly IScraperService _scraperService;
-    private readonly IZoneRepository _zoneRepository;
+    private readonly IJobScheduler _jobScheduler;
+    private readonly IScraperProducer _scraperProducer;
 
-    public GetDataCommandHandler(IScraperService scraperService, IZoneRepository zoneRepository)
+    public GetDataCommandHandler(IJobScheduler jobScheduler, IScraperProducer scraperProducer)
     {
-        _scraperService=scraperService;
-        _zoneRepository=zoneRepository;
+        _jobScheduler=jobScheduler;
+        _scraperProducer=scraperProducer;
     }
 
     public async Task<string> Handle(GetDataCommand request, CancellationToken cancellationToken)
     {
-        if (request.Update)
-        {
-            await _zoneRepository.DeleteByYearAsync(request.Year);
-        }
+        await _scraperProducer.PublishScraperRequest(request.Year, request.Update, request.UserId);
 
-        var zones = await _scraperService.GetData(request.Year);
-        try
-        {
-            await _zoneRepository.BulkInsertAsync(zones);
-        }catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-        }
-        return "Ok";
+        //await _jobScheduler.ScheduleScraperJob(request.Year, request.Update, request.UserId, cancellationToken);
+
+
+        return "ScraperJob programado exitosamente.";
     }
 }

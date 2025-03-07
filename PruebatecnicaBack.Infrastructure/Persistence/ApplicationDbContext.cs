@@ -28,5 +28,6 @@ namespace PruebatecnicaBack.Infrastructure.Persistence
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Zone> Zones { get; set; }
+        public DbSet<ScraperQueue> ScraperQueues { get; set; }
     }
 }

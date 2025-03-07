@@ -112,3 +112,22 @@ El sistema incluye dos usuarios predefinidos para pruebas:
 ## Pantalla de Swagger
 Se muestra la pantalla del funcionamiento del swagger
 ![Pantalla de swagger](/swagger.png)
+
+## Prueba de concepto usando Quartz
+¿Cuándo usar un Background Task con Quartz?
+
+Quartz es ideal cuando: 
+
+   - Necesitas ejecutar tareas recurrentes en intervalos específicos (cada minuto, hora, día, etc.).
+   - Requieres programar tareas con flexibilidad (cron jobs, ejecuciones diferidas).
+   - Necesitas manejar múltiples tareas en paralelo con diferentes programaciones.
+   - Quieres reintentos automáticos en caso de fallas.
+
+¿Quartz.NET consume muchos recursos?
+- Quartz en sí es liviano porque usa un Scheduler, lo que significa que solo consume recursos cuando un Job está en ejecución.
+- Si tu Job es pesado (como scraping con muchas peticiones web), el consumo dependerá más de la lógica dentro del Job que de Quartz en sí.
+- Para optimizarlo, puedes:
+
+Ejecutar Jobs en horarios de baja carga.
+Limitar la concurrencia de Jobs.
+Configurar un ThreadPool para evitar el consumo excesivo de hilos.

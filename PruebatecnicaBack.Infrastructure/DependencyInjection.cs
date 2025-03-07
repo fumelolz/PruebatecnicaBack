@@ -17,6 +17,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using PruebatecnicaBack.Application.Common.Interfaces.scrapping;
 using PruebatecnicaBack.Infrastructure.Services.Scraper;
+using PruebatecnicaBack.Infrastructure.Persistence.Quartz;
+using PruebatecnicaBack.Application.Common.Interfaces.Scheduling;
+using PruebatecnicaBack.Application.Common.Interfaces.Scraper;
+using MassTransit;
+using PruebatecnicaBack.Infrastructure.Messaging;
 
 namespace PruebatecnicaBack.Application
 {
@@ -31,10 +36,16 @@ namespace PruebatecnicaBack.Application
             services.AddScoped<IZoneRepository, ZoneRepository>();
             services.AddTransient<IFileStorage, LocalFileStorage>();
             services.AddScoped<IScraperService, ScraperService>();
+            services.AddScoped<IJobScheduler, QuartzJobScheduler>();
+            
             services.AddHttpContextAccessor();
             services.AddDbContext<ApplicationDbContext>((sp, options) => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")).AddInterceptors(sp.GetRequiredService<DateTrackingInterceptor>()));
             
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+
+            services.AddQuartzConfiguration();
+            services.AddRabbitMQ();
+
             return services;
         }
 
