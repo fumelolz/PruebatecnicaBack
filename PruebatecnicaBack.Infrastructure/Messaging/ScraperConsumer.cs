@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using PruebatecnicaBack.Application.Common.Interfaces.Scheduling;
 using PruebatecnicaBack.Application.Common.Interfaces.scrapping;
 using PruebatecnicaBack.Application.Common.Persistence;
+using PruebatecnicaBack.Domain.Entities;
+using PruebatecnicaBack.Infrastructure.Persistence.Quartz.Jobs;
 using PruebatecnicaBack.Infrastructure.Persistence.SignalR;
 using System.Threading;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -15,26 +17,31 @@ public class ScraperConsumer : IConsumer<ScraperRequest>
     private readonly IHubContext<NotificationHub> _hubContext;
     private readonly IScraperService _scraperService;
     private readonly IZoneRepository _zoneRepository;
-    public ScraperConsumer(IHubContext<NotificationHub> hubContext, IScraperService scraperService, IZoneRepository zoneRepository)
+    private readonly IScraperQueueRepository _scraperQueueRepository;
+    public ScraperConsumer(IHubContext<NotificationHub> hubContext, IScraperService scraperService, IZoneRepository zoneRepository, IScraperQueueRepository scraperQueueRepository)
     {
         _hubContext=hubContext;
         _scraperService=scraperService;
         _zoneRepository=zoneRepository;
+        _scraperQueueRepository=scraperQueueRepository;
     }
 
     public async Task Consume(ConsumeContext<ScraperRequest> context)
     {
         await Task.CompletedTask;
         var message = context.Message;
+        var year = message.Year;
+        var update = message.Update;
+        var userId = message.UserId;
+        var connectionId = NotificationHub.GetConnectionId(userId);
+
         try
         {
-            var year = message.Year;
-            var update = message.Update;
-            var userId = message.UserId;
+            
             Console.WriteLine($"Escuchando el mensaje {message}");
 
             Console.WriteLine($"Ejecutando ScraperJob para el año {year}, Update: {update}");
-            await Task.Delay(5_000);
+            await Task.Delay(60_000);
             if (update)
             {
                 await _zoneRepository.DeleteByYearAsync(year);
@@ -46,7 +53,8 @@ public class ScraperConsumer : IConsumer<ScraperRequest>
 
 
             Console.WriteLine($"Scraping finalizado para el año {year}");
-            var connectionId = NotificationHub.GetConnectionId(userId);
+            await _scraperQueueRepository.MarkJobAsCompleted(year);
+
             if (connectionId != null)
             {
                 await _hubContext.Clients.Client(connectionId).SendAsync("JobCompleted", new { message = $"Scraping finalizado para el año {year}", year });

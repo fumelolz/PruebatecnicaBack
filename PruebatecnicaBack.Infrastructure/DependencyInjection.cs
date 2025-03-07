@@ -37,6 +37,7 @@ namespace PruebatecnicaBack.Application
             services.AddTransient<IFileStorage, LocalFileStorage>();
             services.AddScoped<IScraperService, ScraperService>();
             services.AddScoped<IJobScheduler, QuartzJobScheduler>();
+            services.AddScoped<IScraperQueueRepository, ScraperQueueRepository>();
             
             services.AddHttpContextAccessor();
             services.AddDbContext<ApplicationDbContext>((sp, options) => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")).AddInterceptors(sp.GetRequiredService<DateTrackingInterceptor>()));
