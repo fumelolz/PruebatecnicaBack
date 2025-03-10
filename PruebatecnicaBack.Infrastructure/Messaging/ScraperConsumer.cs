@@ -41,7 +41,7 @@ public class ScraperConsumer : IConsumer<ScraperRequest>
             Console.WriteLine($"Escuchando el mensaje {message}");
 
             Console.WriteLine($"Ejecutando ScraperJob para el año {year}, Update: {update}");
-            await Task.Delay(60_000);
+            await Task.Delay(10_000);
             if (update)
             {
                 await _zoneRepository.DeleteByYearAsync(year);

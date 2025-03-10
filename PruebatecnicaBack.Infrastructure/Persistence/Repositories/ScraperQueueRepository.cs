@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PruebatecnicaBack.Application.Common.Persistence;
+using PruebatecnicaBack.Contracts.Common;
 using PruebatecnicaBack.Domain.Entities;
 using PruebatecnicaBack.Infrastructure.Persistence.Quartz.Jobs;
+using System.Linq.Expressions;
 
 namespace PruebatecnicaBack.Infrastructure.Persistence.Repositories;
 
@@ -35,8 +37,49 @@ public class ScraperQueueRepository : IScraperQueueRepository
         }
     }
 
-    public async Task<List<ScraperQueue>> GetPendingJobs()
+    public async Task<PagedList<ScraperQueue>> GetPendingJobs(
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int page,
+        int pageSize)
     {
-        return await _context.ScraperQueues.Where(j => !j.IsCompleted).ToListAsync();
+        IQueryable<ScraperQueue> ScraperQueueQuery = _context.ScraperQueues;
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            ScraperQueueQuery = ScraperQueueQuery.Where(p =>
+            p.Year.ToString().Contains(searchTerm) ||
+            p.UserId.ToString().Contains(searchTerm.ToLower()));
+        }
+
+        if (!string.IsNullOrWhiteSpace(sortColumn))
+        {
+            Expression<Func<ScraperQueue, object>> keySelector = sortColumn.ToLower() switch
+            {
+                "userId" => scraperQueue => scraperQueue.UserId,
+                "year" => scraperQueue => scraperQueue.Year,
+                "updatedDate" => scraperQueue => scraperQueue.UpdatedDate,
+                "creationDate" => scraperQueue => scraperQueue.CreationDate,
+                _ => scraperQueue => scraperQueue.ScraperQueueId
+            };
+
+            if (sortOrder.ToLower() == "desc")
+            {
+                ScraperQueueQuery = ScraperQueueQuery.OrderByDescending(keySelector);
+            }
+            else
+            {
+                ScraperQueueQuery = ScraperQueueQuery.OrderBy(keySelector);
+            }
+        }
+
+        var query = ScraperQueueQuery.Where(j => !j.IsCompleted).AsNoTracking();
+
+        var jobs = await PagedList<ScraperQueue>.CreateAsync(query, page, pageSize);
+
+        return jobs;
+
+        //return await _context.ScraperQueues.Where(j => !j.IsCompleted).ToListAsync();
     }
 }
