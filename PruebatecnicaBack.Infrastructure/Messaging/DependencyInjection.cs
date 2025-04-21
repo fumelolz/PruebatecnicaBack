@@ -17,10 +17,10 @@ public static class DependencyInjection
 
             x.UsingRabbitMq((context, cfg) =>
             {
-                cfg.Host("localhost", "/", h =>
+                cfg.Host("104.197.121.15", "/", h =>
                 {
-                    h.Username("guest");
-                    h.Password("guest");
+                    h.Username("admin");
+                    h.Password("admin");
                 });
 
                 // Configura el consumidor para la cola 'scraper_queue'

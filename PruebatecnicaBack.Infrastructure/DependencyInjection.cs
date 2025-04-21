@@ -40,7 +40,7 @@ namespace PruebatecnicaBack.Application
             services.AddScoped<IScraperQueueRepository, ScraperQueueRepository>();
             
             services.AddHttpContextAccessor();
-            services.AddDbContext<ApplicationDbContext>((sp, options) => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")).AddInterceptors(sp.GetRequiredService<DateTrackingInterceptor>()));
+            services.AddDbContext<ApplicationDbContext>((sp, options) => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")).AddInterceptors(sp.GetRequiredService<DateTrackingInterceptor>()));
             
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
